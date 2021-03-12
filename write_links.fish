@@ -23,4 +23,14 @@ sudo cp ./etc/paru.conf /etc/paru.conf
 
 # Plasma
 rm ~/.config/kglobalshortcutsrc
-cp ./kde/kglobalshortcutsrc
+cp ./kde/kglobalshortcutsrc ~/.config/kglobalshortcutsrc
+
+# Doom Emacs
+if test ! -e ~/.emacs.d/bin/doom.cmd
+	git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
+	~/.emacs.d/bin/doom install
+end
+rm -R ~/.doom.d/
+mkdir ~/.doom.d
+cp ./.doom.d/* ~/.doom.d/
+
