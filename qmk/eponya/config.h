@@ -1,0 +1,25 @@
+#include "../../config.h"
+
+#define SPLIT_USB_DETECT
+#define SPLIT_MODS_ENABLE
+#define SPLIT_TRANSPORT_MIRROR
+
+#define COMBO_COUNT 4
+#define COMBO_TERM 100
+
+#define PERMISSIVE_HOLD
+#define IGNORE_MOD_TAP_INTERRUPT
+#define TAPPING_TERM 250
+#define TAPPING_TERM_PER_KEY
+#define TAPPING_TOGGLE 3
+
+#define MK_3_SPEED
+#define MK_MOMENTARY_ACCEL
+#define MK_C_OFFSET_1 7
+#define MK_C_INTERVAL_1 16
+#define MK_C_OFFSET_2 25
+#define MK_C_INTERVAL_2 16
+
+#define NO_ACTION_ONESHOT
+#define NO_ACTION_MACRO
+#define NO_ACTION_FUNCTION
