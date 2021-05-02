@@ -1,0 +1,143 @@
+# plug.kak
+evaluate-commands %sh{
+       plugins="$kak_config/plugins"
+           mkdir -p "$plugins"
+               [ ! -e "$plugins/plug.kak" ] && \
+                       git clone -q https://github.com/andreyorst/plug.kak.git "$plugins/plug.kak"
+                           printf "%s\n" "source '$plugins/plug.kak/rc/plug.kak'"
+}
+plug "andreyorst/plug.kak" noload
+
+# width of a tab
+set-option global tabstop 3
+plug 'andreyorst/smarttab.kak'
+hook global ModuleLoaded smarttab %{
+    set-option global softtabstop 3
+    set-option global smarttab_smarttab_mode_name 'smart'
+}
+hook global WinSetOption filetype=zig expandtab
+
+evaluate-commands %sh{
+	find /usr/local/share/kakoune-extra-filetypes/rc -type f -name \*\\.kak -exec printf 'source %s\n' '{}' \;
+}
+
+# indent with 4 spaces
+set-option global indentwidth 4
+
+# always keep one line and three columns displayed around the cursor
+set-option global scrolloff 1,3
+
+# display line numbers
+add-highlighter global/ number-lines -hlcursor
+
+# Cat
+set-option global ui_options ncurses_assistant=cat
+
+# highlight trailing whitespace
+add-highlighter global/ regex \h+$ 0:error
+
+# softwrap long lines
+add-highlighter global/ wrap -word -indent
+
+# set the colour scheme
+#theme base16
+
+# plug "teddydd/kakoune-selenized" theme
+# colorscheme selenized-light
+# set-face global LineNumbersWrapped rgb:d5cdb6+bd
+
+#plug "leperdu/kakboard" %{
+#hook global 
+#       hook global wincreate .* %{ kakboard-enable }
+#} config %{
+##       kakboard_paste_cmd xclip
+#}
+
+plug 'crizan/kak-rainbower'
+plug 'insipx/kak-crosshairs' %{
+   hook global WinCreate .* %{ cursorline }
+}
+set-face global crosshairs_line default,rgb:ece3cc+bd
+
+# plug "andreyorst/powerline.kak" defer powerline %{
+# 	#configure powerline.kak as desired
+# 	powerline-theme solarized-dark
+# } config %{
+# 	#powerline-start
+# }
+
+source "%val{config}/utils.kak"
+
+hook global InsertIdle .* %{
+  set-face window PrimaryCursor default,default+u
+  set-face window PrimaryCursorEol default,default+u
+}
+hook global NormalIdle .* %{
+	set-face window PrimaryCursor default,default+r
+	set-face window PrimaryCursorEol default,default+r
+	set-face window LineNumberCursor rgb:009c8f
+}
+
+hook global WinDisplay .* info-buffers
+
+plug 'delapouite/kakoune-buffers' %{
+	map global user b ':enter-buffers-mode<ret>'              -docstring 'buffers…'
+	map global user b ':enter-user-mode -lock buffers<ret>'   -docstring 'buffers (lock)…'
+}
+
+map global user o ':w! <ret>' -docstring 'write'
+map global user x ':wq! <ret>' -docstring 'write quit'
+map global user X ':q! <ret>' -docstring 'quit no-write'
+
+map global normal ( '[p'
+map global normal ) ']p'
+
+plug 'alexherbo2/move-line.kak'
+require-module move-line
+map global normal <down> ': move-line-below<ret>'
+map global normal <up> ': move-line-above<ret>'
+
+plug "andreyorst/fzf.kak" defer fzf %{
+    set-option global fzf_project_use_tilda true
+} defer fzf-file %{
+    set-option global fzf_file_command 'rg'
+    set-option global fzf_highlight_command 'bat'
+} config %{
+    require-module fzf
+}
+
+map global user t ': fzf-mode<ret>' -docstring 'fzf'
+
+map global user c ': comment-line <ret>' -docstring 'comment line'
+map global user <a-c> ': comment-block <ret>' -docstring 'comment block'
+map global user <a-C> 'xyp: comment-line<ret>jgi ' -docstring 'comment and duplicate'
+
+plug 'h-youhei/kakoune-surround'
+declare-user-mode surround
+map global user s ':enter-user-mode surround<ret>' -docstring 'surround'
+map global surround s ':surround<ret>' -docstring 'surround'
+map global surround c ':change-surround<ret>' -docstring 'change'
+map global surround d ':delete-surround<ret>' -docstring 'delete'
+map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
+
+# map global object h 'c<gt>,<lt><ret>' -docstring "select in the angle brackets"
+
+map global normal <a-.> '/[\}\)\]]<ret>'
+map global normal <a-,> '<a-/>[\[\(\{]<ret>'
+map global normal <a-gt> '?[\}\)\]]<ret>'
+map global normal <a-lt> '<a-?>[\[\(\{]<ret>'
+
+map global user g ':kitty-terminal lazygit<ret>' -docstring 'Lazygit'
+
+plug 'occivink/kakoune-gdb'
+
+plug 'kakoune-editor/kakoune-extra-filetypes'
+evaluate-commands %sh{
+    find "${kak_runtime}"/../kakoune-extra-filetypes/rc -type f -name \*\\.kak -exec printf 'source %s\n' '{}' \;
+}
+
+plug 'andreyorst/tagbar.kak'
+hook global WinSetOption filetype=(c|cpp|zig) %{
+        tagbar-enable
+}
+
