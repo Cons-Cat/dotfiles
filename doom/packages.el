@@ -53,3 +53,8 @@
                                         ;(unpin! t)
 (package! ligaturel
   :recipe (:host github :repo "mickeynp/ligature.el"))
+(package! leuven-theme)
+ (package! evil-string-inflection)
+
+;;(package! evil-briefcase
+;;  :recipe (:host github :repo "strickinato/evil-briefcase"))
